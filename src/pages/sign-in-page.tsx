@@ -4,11 +4,24 @@ import { useSignInWithPassword } from "@/hooks/mutations/use-sign-in-with-passwo
 import { useState } from "react";
 import { Link } from "react-router";
 
+import githubLogo from "@/assets/github-mark.svg";
+import { useSignInWithOAuth } from "@/hooks/mutations/use-sign-in-with-oauth";
+import { toast } from "sonner";
+
 export default function SignInPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const { mutate: signIn, data } = useSignInWithPassword();
+    const { mutate: signIn, data } = useSignInWithPassword({
+        onError: (error) => {
+            setPassword("");
+            toast.error(error.message, {
+                position: "top-center",
+            });
+        },
+    });
+
+    const { mutate: signInWithOAuth, data: provider } = useSignInWithOAuth();
 
     const handleSignInClick = async () => {
         if (email.trim() === "") return;
@@ -16,7 +29,11 @@ export default function SignInPage() {
 
         signIn({ email, password });
 
-        alert(`안녕하세요 ${data?.user.email}님`);
+        // alert(`안녕하세요 ${data?.user.email}님`);
+    };
+
+    const handleSignInWithGithubClick = async () => {
+        signInWithOAuth("github");
     };
 
     return (
@@ -37,13 +54,26 @@ export default function SignInPage() {
                     type="password"
                     placeholder="password"
                 />
-                <div>
+                <div className="flex flex-col gap-2">
                     <Button
                         onClick={handleSignInClick}
                         type="button"
                         className="w-full"
                     >
                         로그인
+                    </Button>
+                    <Button
+                        onClick={handleSignInWithGithubClick}
+                        className="w-full"
+                        type="button"
+                        variant="outline"
+                    >
+                        <img
+                            className="h-4 w-4"
+                            src={githubLogo}
+                            alt="깃허브 로고"
+                        />
+                        Github 계정으로 로그인
                     </Button>
                 </div>
                 <div>
