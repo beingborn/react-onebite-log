@@ -8,7 +8,7 @@
         "build": "tsc -b && vite build",
         "lint": "eslint .",
         "preview": "vite preview",
-        "type-gen": "npx supabase gen types typescript --project-id \"hqrtbhxjhvtcgvkgkpxm\" --schema public > src/databse.type.ts"
+        "type-gen": "npx supabase gen types typescript --project-id \"hqrtbhxjhvtcgvkgkpxm\" --schema public > src/database.type.ts"
     },
     "dependencies": {
         "@radix-ui/react-alert-dialog": "^1.1.14",
