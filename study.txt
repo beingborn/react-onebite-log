@@ -37,3 +37,13 @@
     -  token : 일회용 인증 토큰 
     -  type : recovery
     -  redirect_to : 재설정 페이지 주소
+
+# 이미지 저장 방식
+  - 이미지를 그대로 저장하기엔 평균적인 데이터보다 용량이 커 Storage라는 공간에 따로 저장한다.
+    Stroage 
+      - 이미지, 동영상 등 파일 보관소 
+      - 고유 URL 생성
+  - 사용자 > Stroage로 업로드 
+  - Stroage > 사용자로 이미지 URL 발송
+  - 사용자 > 데이터 베이스로 해당 이미지 URL 저장 요청 {user_id}/{post_id}/image.png
+

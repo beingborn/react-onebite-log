@@ -3,12 +3,21 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useCreatePost } from "@/hooks/mutations/post/use-create-post";
 import { generateErrorMessage } from "@/lib/error";
 import { usePostEditorModal } from "@/store/post-editor-modal";
+import { useSession } from "@/store/session";
 import { ImageIcon } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { toast } from "sonner";
+import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
+
+type Image = {
+    file: File;
+    previewUrl: string;
+};
 
 export default function PostEditorModal() {
+    const session = useSession();
     const [content, setContent] = useState("");
+    const [images, setImages] = useState<Image[]>([]);
 
     const { mutate: createPost, isPending: isCreatePostIsPending } =
         useCreatePost({
@@ -30,8 +39,8 @@ export default function PostEditorModal() {
         });
 
     const { isOpen, close } = usePostEditorModal();
-
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleCloseModal = () => {
         close();
@@ -40,7 +49,29 @@ export default function PostEditorModal() {
     const handleCreatePostClick = () => {
         if (content.trim() === "") return;
 
-        createPost(content);
+        createPost({
+            content,
+            images: images.map((image) => image.file),
+            userId: session!.user.id,
+        });
+    };
+
+    const handleSelectImage = (e: ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            const files = Array.from(e.target.files);
+
+            console.log(files);
+
+            files.forEach((file) => {
+                setImages((prev) => [
+                    ...prev,
+                    { file, previewUrl: URL.createObjectURL(file) },
+                ]);
+            });
+        }
+
+        console.log(e.target.value);
+        e.target.value = "";
     };
 
     useEffect(() => {
@@ -69,7 +100,35 @@ export default function PostEditorModal() {
                     className="max-h-125 min-h-25 focus:outline-none"
                     placeholder="무슨 일이 있었나요?"
                 />
-                <Button variant="outline" disabled={isCreatePostIsPending}>
+                <input
+                    ref={fileInputRef}
+                    onChange={handleSelectImage}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                />
+                {images.length > 0 && (
+                    <Carousel>
+                        <CarouselContent>
+                            {images.map((image, index) => (
+                                <CarouselItem key={image.previewUrl}>
+                                    <div>
+                                        <img
+                                            src={image.previewUrl}
+                                            alt={`${index}번째 미리보기`}
+                                        />
+                                    </div>
+                                </CarouselItem>
+                            ))}
+                        </CarouselContent>
+                    </Carousel>
+                )}
+                <Button
+                    onClick={() => fileInputRef.current?.click()}
+                    variant="outline"
+                    disabled={isCreatePostIsPending}
+                >
                     <ImageIcon />
                     이미지 추가
                 </Button>
