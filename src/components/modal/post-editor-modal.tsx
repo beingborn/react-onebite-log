@@ -2,9 +2,10 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useCreatePost } from "@/hooks/mutations/post/use-create-post";
 import { generateErrorMessage } from "@/lib/error";
+import { useOpenAlertModal } from "@/store/alert-modal";
 import { usePostEditorModal } from "@/store/post-editor-modal";
 import { useSession } from "@/store/session";
-import { ImageIcon } from "lucide-react";
+import { ImageIcon, X } from "lucide-react";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { toast } from "sonner";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
@@ -16,6 +17,7 @@ type Image = {
 
 export default function PostEditorModal() {
     const session = useSession();
+    const openAlertModal = useOpenAlertModal();
     const [content, setContent] = useState("");
     const [images, setImages] = useState<Image[]>([]);
 
@@ -42,7 +44,39 @@ export default function PostEditorModal() {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    useEffect(() => {
+        if (textareaRef.current) {
+            textareaRef.current.style.height = "auto";
+            textareaRef.current.style.height =
+                textareaRef.current.scrollHeight + "px";
+        }
+    }, [content]);
+
+    useEffect(() => {
+        if (!isOpen) {
+            images.forEach((image) => {
+                URL.revokeObjectURL(image.previewUrl);
+            });
+
+            return;
+        }
+        textareaRef.current?.focus();
+        setContent("");
+    }, [isOpen]);
+
     const handleCloseModal = () => {
+        if (content !== "" || images.length !== 0) {
+            openAlertModal({
+                title: "게시글 작성이 마무리 되지 않았습니다",
+                description: "이 화면에서 나가면 작성중이던 내용이 사라집니다",
+                onPositive: () => {
+                    close();
+                },
+            });
+
+            return;
+        }
+
         close();
     };
 
@@ -60,8 +94,6 @@ export default function PostEditorModal() {
         if (e.target.files) {
             const files = Array.from(e.target.files);
 
-            console.log(files);
-
             files.forEach((file) => {
                 setImages((prev) => [
                     ...prev,
@@ -70,23 +102,16 @@ export default function PostEditorModal() {
             });
         }
 
-        console.log(e.target.value);
         e.target.value = "";
     };
 
-    useEffect(() => {
-        if (textareaRef.current) {
-            textareaRef.current.style.height = "auto";
-            textareaRef.current.style.height =
-                textareaRef.current.scrollHeight + "px";
-        }
-    }, [content]);
+    const handleDeleteImage = (image: Image) => {
+        setImages((prevImages) =>
+            prevImages.filter((item) => item.previewUrl !== image.previewUrl),
+        );
 
-    useEffect(() => {
-        if (!isOpen) return;
-        textareaRef.current?.focus();
-        setContent("");
-    }, [isOpen]);
+        URL.revokeObjectURL(image.previewUrl);
+    };
 
     return (
         <Dialog open={isOpen} onOpenChange={handleCloseModal}>
@@ -113,11 +138,20 @@ export default function PostEditorModal() {
                         <CarouselContent>
                             {images.map((image, index) => (
                                 <CarouselItem key={image.previewUrl}>
-                                    <div>
+                                    <div className="relative inline-flex">
                                         <img
                                             src={image.previewUrl}
                                             alt={`${index}번째 미리보기`}
                                         />
+                                        <button
+                                            onClick={() =>
+                                                handleDeleteImage(image)
+                                            }
+                                            type="button"
+                                            className="absolute top-2 right-2 cursor-pointer"
+                                        >
+                                            <X size="24" />
+                                        </button>
                                     </div>
                                 </CarouselItem>
                             ))}
