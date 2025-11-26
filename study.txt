@@ -47,3 +47,14 @@
   - Stroage > 사용자로 이미지 URL 발송
   - 사용자 > 데이터 베이스로 해당 이미지 URL 저장 요청 {user_id}/{post_id}/image.png
 
+# 무한 스크롤 
+- Step1 : 스크롤 하단 감지
+  - 감지를 위한 Div 태그 생성 
+  - 인터섹션 옵저버 
+  - 감지 시 이벤트 핸들러 실행
+
+- Step2 : 데이터 추가
+  - useInfiniteQuery 사용 
+  - 무한 스크롤을 위한 Hooks
+  - tanstack/reack-query에서 제공
+
