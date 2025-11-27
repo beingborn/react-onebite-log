@@ -69,9 +69,7 @@ export async function createPostWithImages({
     }
 }
 
-export async function updatePost(
-    post: Partial<PostEntity> & { id: number; image_url: string[] },
-) {
+export async function updatePost(post: Partial<PostEntity> & { id: number }) {
     const { data, error } = await supabase
         .from("post")
         .update(post)
