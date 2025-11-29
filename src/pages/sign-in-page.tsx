@@ -100,9 +100,9 @@ export default function SignInPage() {
                 <div className="flex flex-col gap-2">
                     <Link
                         className="text-muted-foreground hover:underline"
-                        to={"/sign-in"}
+                        to={"/sign-up"}
                     >
-                        계정이 없으시다면? 로그인
+                        계정이 없으시다면? 회원가입
                     </Link>
                     <Link
                         className="text-muted-foreground hover:underline"
