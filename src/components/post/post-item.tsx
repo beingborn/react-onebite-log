@@ -7,10 +7,12 @@ import {
 import { usePostByIdData } from "@/hooks/queries/use-post-by-id-data";
 import { formatTimeAgo } from "@/lib/time";
 import { useSession } from "@/store/session";
-import { HeartIcon, MessageCircle } from "lucide-react";
+import { MessageCircle } from "lucide-react";
+import { Link } from "react-router";
 import DeletePostButton from "./delete-post-button";
 import EditPostButton from "./edit-post-button";
 import Fallback from "./fallback";
+import LikePostButton from "./like-post-button";
 import Loader from "./loader";
 
 export default function PostItem({ postId }: { postId: number }) {
@@ -37,11 +39,13 @@ export default function PostItem({ postId }: { postId: number }) {
             <div className="flex justify-between">
                 {/* 1-1. 유저 정보 */}
                 <div className="flex items-start gap-4">
-                    <img
-                        src={post.author.avatar_url || defaultAvatar}
-                        alt={`${post.author.nickname}의 프로필 이미지`}
-                        className="h-10 w-10 rounded-full object-cover"
-                    />
+                    <Link to={`profile/${post.author_id}`}>
+                        <img
+                            src={post.author.avatar_url || defaultAvatar}
+                            alt={`${post.author.nickname}의 프로필 이미지`}
+                            className="h-10 w-10 rounded-full object-cover"
+                        />
+                    </Link>
                     <div>
                         <div className="font-bold hover:underline">
                             {post.author.nickname}
@@ -87,12 +91,11 @@ export default function PostItem({ postId }: { postId: number }) {
 
             {/* 3. 좋아요, 댓글 버튼 */}
             <div className="flex gap-2">
-                {/* 3-1. 좋아요 버튼 */}
-                <button className="hover:bg-muted flex cursor-pointer items-center gap-2 rounded-xl border-1 p-2 px-4 text-sm">
-                    <HeartIcon className="h-4 w-4" />
-                    <span>0</span>
-                </button>
-
+                <LikePostButton
+                    id={post.id}
+                    likeCount={post.like_count}
+                    isLiked={post.isLiked}
+                />
                 {/* 3-2. 댓글 버튼 */}
                 <button className="hover:bg-muted flex cursor-pointer items-center gap-2 rounded-xl border-1 p-2 px-4 text-sm">
                     <MessageCircle className="h-4 w-4" />

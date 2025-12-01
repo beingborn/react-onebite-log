@@ -1,18 +1,28 @@
 import { fetchPosts } from "@/api/post";
 import { QUERY_KEYS } from "@/lib/constants";
+import { useSession } from "@/store/session";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 
 const PAGE_SIZE = 5;
 
-export function useInfinitePostsData() {
+export function useInfinitePostsData(authorId?: string) {
     const QueryClient = useQueryClient();
+    const session = useSession();
 
     return useInfiniteQuery({
-        queryKey: QUERY_KEYS.post.list,
+        /* 쿼리 값 중복 시 authorId인 상태로 데이터가 유지되버림  */
+        queryKey: !authorId
+            ? QUERY_KEYS.post.list
+            : QUERY_KEYS.post.userList(authorId),
         queryFn: async ({ pageParam }) => {
             const from = pageParam * PAGE_SIZE;
             const to = from + PAGE_SIZE - 1;
-            const posts = await fetchPosts({ from, to });
+            const posts = await fetchPosts({
+                from,
+                to,
+                userId: session!.user.id,
+                authorId,
+            });
 
             posts.forEach((post) => {
                 QueryClient.setQueryData(QUERY_KEYS.post.byId(post.id), post);
