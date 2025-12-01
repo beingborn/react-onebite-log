@@ -1,7 +1,7 @@
-import defaultAvatar from "@/assets/default-avatar.jpg";
 import logo from "@/assets/logo.png";
 import { SunIcon } from "lucide-react";
 import { Link, Outlet } from "react-router";
+import ProfileButton from "./header/profile-button";
 
 export default function GlobalLayout() {
     return (
@@ -23,7 +23,7 @@ export default function GlobalLayout() {
                         >
                             <SunIcon />
                         </button>
-                        <img className="h-6" src={defaultAvatar} alt="" />
+                        <ProfileButton />
                     </div>
                 </div>
             </header>
