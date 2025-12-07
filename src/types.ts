@@ -1,5 +1,7 @@
 import { type Database } from "./database.type";
 
+export type CommentEntity = Database["public"]["Tables"]["comment"]["Row"];
+
 export type PostEntity = Database["public"]["Tables"]["post"]["Row"];
 
 export type ProfileEntity = Database["public"]["Tables"]["profile"]["Row"];
