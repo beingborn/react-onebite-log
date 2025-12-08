@@ -1,7 +1,14 @@
 import supabase from "@/lib/supabase";
 
-export async function fetchComment(postId: number) {
-    const { data, error } = await supabase.from("comment").select();
+export async function fetchComments(postId: number) {
+    const { data, error } = await supabase
+        .from("comment")
+        .select("*, author: profile!author_id (*)")
+        .eq("post_id", postId)
+        .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    return data;
 }
 
 export async function createComment({

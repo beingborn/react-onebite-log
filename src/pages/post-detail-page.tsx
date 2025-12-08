@@ -14,7 +14,7 @@ export default function PostDetailPage() {
             <PostItem type="DETAIL" postId={Number(postId)} />
             <p className="text-xl font-bold">댓글</p>
             <CommentEditor postId={Number(postId)} />
-            <CommentList />
+            <CommentList postId={Number(postId)} />
         </div>
     );
 }
