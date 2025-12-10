@@ -1,5 +1,5 @@
 import CommentItem from "@/components/comment/comment-item";
-import { useCommentsData } from "@/hooks/mutations/comment/use-comments-data";
+import { useCommentsData } from "@/hooks/queries/use-comments-data";
 import Fallback from "../post/fallback";
 import Loader from "../post/loader";
 

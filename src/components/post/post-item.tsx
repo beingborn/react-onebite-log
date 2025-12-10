@@ -31,13 +31,13 @@ export default function PostItem({
         error,
     } = usePostByIdData({
         postId,
-        type: "FEED",
+        type,
     });
-
-    const isMine = post?.author_id === userId;
 
     if (isPending) return <Loader />;
     if (error) return <Fallback />;
+
+    const isMine = post.author_id === userId;
 
     return (
         <div

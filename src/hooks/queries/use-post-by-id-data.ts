@@ -19,6 +19,7 @@ export function usePostByIdData({
                 postId,
                 userId: session!.user.id,
             }),
+
         enabled: type === "FEED" ? false : true,
     });
 }
